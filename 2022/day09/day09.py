@@ -23,9 +23,7 @@ for line in lines:
 
 print("Part One: {}".format(len(tail.visited_positions)))
 
-rope = []
-for i in range(10):
-    rope.append(Knot(Vector(0, 0)))
+rope = [Knot(Vector(0, 0)) for _ in range(10)]
 
 for line in lines:
     direction, value = line.split(" ")

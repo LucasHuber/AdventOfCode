@@ -5,7 +5,9 @@ class Vector:
         
     def __str__(self) -> str:
         return "({}, {})".format(self.x, self.y)
-             
+    
+sign = lambda x: 1 if x > 0 else ( -1 if x < 0 else 0 )
+
 class Knot:
     def __init__(self, vector: Vector) -> None:
         self.vec = vector
@@ -21,14 +23,7 @@ class Knot:
         dx = follow_vector.x - self.vec.x
         dy = follow_vector.y - self.vec.y
         
-        if (0 <= abs(dx) <= 1 and 0 <= abs(dy) <= 1):
+        if (0 <= abs(dx) <= 1 and 0 <= abs(dy) <= 1):   # follow_vector still connected to knot
             return
-        elif dx == 0:
-            self.move(Vector(0, int(dy/2)))
-        elif dy == 0:
-            self.move(Vector(int(dx/2), 0))
         else:
-            vec = Vector(0, 0)
-            vec.x = 1 if dx > 0 else -1
-            vec.y = 1 if dy > 0 else -1
-            self.move(vec)
+            self.move(Vector(sign(dx), sign(dy)))
