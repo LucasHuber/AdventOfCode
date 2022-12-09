@@ -1,5 +1,5 @@
 from os import path
-file = open(path.join(path.dirname(__file__), "test.txt"))
+file = open(path.join(path.dirname(__file__), "input.txt"))
 
 from Knot import Vector, Knot
 
@@ -12,14 +12,26 @@ dir = {
     "R": Vector(1, 0)
 }
 
-Head = Knot(Vector(0, 0))
-Tail = Knot(Vector(0 ,0))
+head = Knot(Vector(0, 0))
+tail = Knot(Vector(0 ,0))
 
 for line in lines:
     direction, value = line.split(" ")
     for i in range(int(value)):
-        Head.move(dir[direction])
-        Tail.follow(Head.vec, dir[direction])
+        head.move(dir[direction])
+        tail.follow(head.vec)
 
-print(Tail.visited_positions)
-print(len(Tail.visited_positions))
+print("Part One: {}".format(len(tail.visited_positions)))
+
+rope = []
+for i in range(10):
+    rope.append(Knot(Vector(0, 0)))
+
+for line in lines:
+    direction, value = line.split(" ")
+    for i in range(int(value)):
+        rope[0].move(dir[direction])
+        for i in range(1, len(rope)):
+            rope[i].follow(rope[i-1].vec)
+
+print("Part Two: {}".format(len(rope[9].visited_positions)))
