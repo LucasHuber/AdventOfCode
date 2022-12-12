@@ -1,70 +1,71 @@
+# Solved using Breath-First Search
+from collections import deque
 from os import path
 file = open(path.join(path.dirname(__file__), "input.txt"))
 
-# ----------------------------------------------------------------------------------------------------
+grid = [list(x) for x in file.read().strip().splitlines()]
 
-from collections import deque
+for r, row in enumerate(grid):
+    for c, item in enumerate(row):
+        if item == "S":
+            sr, sc = r, c
+            grid[r][c] = "a"
+        elif item == "E":
+            er, ec = r, c
+            grid[r][c] = "z"
 
-shortest_path = None
+q = deque()
+q.append((0, sr, sc))
 
-def find_neighbors(x, y):
-    neighbors = []
-    if x > 0:
-        neighbors.append((x - 1, y))
-    if x < len(terrain[0]) - 1:
-        neighbors.append((x + 1, y))
-    if y > 0:
-        neighbors.append((x, y - 1))
-    if y < len(terrain) - 1:
-        neighbors.append((x, y + 1))
-    return neighbors
+vis = {(sr, sc)}
 
-def walk(path):
-    global shortest_path
-    x, y = path[-1]
-    if x == ex and y == ey:
-        if shortest_path is None:
-            shortest_path = len(path)
-        elif len(path) < shortest_path:
-            shortest_path = len(path)
-        # return path
-    for neighbor in find_neighbors(x, y):
-        # print(abs(ord(terrain[y][x])), abs(ord(terrain[neighbor[1]][neighbor[0]])), abs(abs(ord(terrain[y][x])) - abs(ord(terrain[neighbor[1]][neighbor[0]]))))
-        if neighbor not in path and abs(abs(ord(terrain[y][x])) - abs(ord(terrain[neighbor[1]][neighbor[0]]))) <= 1:
-            path.append(neighbor)
-            walk(path.copy())
-            # if result:
-            #     return result
-            path.pop()
-    return None
+while q:
+    d, r, c = q.popleft()
+    for nr, nc in [(r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)]:
+        if nr < 0 or nc < 0 or nr >= len(grid) or nc >= len(grid[0]):
+            continue
+        if (nr, nc) in vis:
+            continue
+        if (ord(grid[nr][nc]) - ord(grid[r][c])) > 1:
+            continue
+        if nr == er and nc == ec:
+            print(d + 1)
+            q.clear()
+            break
+        q.append((d + 1, nr, nc))
+        vis.add((nr, nc))
 
-# ----------------------------------------------------------------------------------------------------
+# --------------------------------------------------
 
-lines = file.read().strip().splitlines()
+# In reverse - From 'E' till first 'a'
+file = open(path.join(path.dirname(__file__), "input.txt"))
+grid = [list(x) for x in file.read().strip().splitlines()]
 
-terrain = []
+for r, row in enumerate(grid):
+    for c, item in enumerate(row):
+        if item == "S":
+            grid[r][c] = "a"
+        elif item == "E":
+            er, ec = r, c
+            grid[r][c] = "z"
 
-for row in range(len(lines)):
-    terrain.append([])
-    for col in range(len(lines[0])):
-        terrain[row].append(lines[row][col])
+q = deque()
+q.append((0, er, ec))
 
-sx, sy, ex, ey = 0, 0, 0, 0
-for line in lines:
-    if "S" in line:
-        sy = lines.index(line)
-        sx = line.index("S")
-    if "E" in line:
-        ey = lines.index(line)
-        ex = line.index("E")
+vis = {(er, ec)}
 
-
-terrain[sy][sx] = "a"
-terrain[ey][ex] = "z"
-
-path = deque()
-path.append((sx, sy))
-
-walk(path)
-
-print(shortest_path - 1)
+while q:
+    d, r, c = q.popleft()
+    for nr, nc in [(r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)]:
+        if nr < 0 or nc < 0 or nr >= len(grid) or nc >= len(grid[0]):
+            continue
+        if (nr, nc) in vis:
+            continue
+        if (ord(grid[nr][nc]) - ord(grid[r][c])) < -1:
+            continue
+        if grid[nr][nc] == "a":
+            print(d + 1)
+            q.clear()
+            break
+        q.append((d + 1, nr, nc))
+        vis.add((nr, nc))
